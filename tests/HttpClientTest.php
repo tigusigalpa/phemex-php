@@ -104,10 +104,27 @@ final class HttpClientTest extends TestCase
         $mock->addResponse(new Response(429, ['Retry-After' => '5'], json_encode(['msg' => 'Rate limit'])));
 
         $config = Config::fromArray(['retries' => 3]);
-        $client = new HttpClient($config, $mock);
+        $client = new HttpClient($config, $mock, sleeper: static fn () => null);
 
         $this->expectException(RateLimitException::class);
 
         $client->send('GET', '/public/products');
+    }
+
+    public function testBooleanQueryParamsAreSerializedAsTrueFalse(): void
+    {
+        $mock = new MockHttpClient();
+        $mock->addResponse(new Response(200, [], json_encode(['code' => 0, 'msg' => ''])));
+
+        $client = new HttpClient(Config::fromArray([]), $mock);
+        $client->send('GET', '/md/orderbook', [
+            'symbol' => 'BTCUSD',
+            'withFee' => true,
+            'reverse' => false,
+        ]);
+
+        $uri = (string) $mock->getLastRequest()?->getUri();
+        self::assertStringContainsString('withFee=true', $uri);
+        self::assertStringContainsString('reverse=false', $uri);
     }
 }

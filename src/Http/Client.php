@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tigusigalpa\Phemex\Http;
 
+use Closure;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\HttpFactory;
 use JsonException;
@@ -38,14 +39,26 @@ final class Client
 
     private readonly Signer $signer;
 
+    /**
+     * @var Closure(int|float): void
+     */
+    private readonly Closure $sleeper;
+
+    /**
+     * @param (callable(int|float): void)|null $sleeper Optional sleep handler (seconds). Defaults to usleep; override in tests.
+     */
     public function __construct(
         private readonly Config $config,
         private readonly ?Psr18Client $httpClient = null,
         private readonly ?RequestFactoryInterface $requestFactory = null,
         private readonly ?StreamFactoryInterface $streamFactory = null,
+        ?callable $sleeper = null,
     ) {
         $this->baseUri = rtrim($this->config->baseUri, '/');
         $this->signer = new Signer($this->config->apiSecret);
+        $this->sleeper = $sleeper !== null
+            ? Closure::fromCallable($sleeper)
+            : static fn (int|float $seconds): mixed => usleep((int) ($seconds * 1_000_000));
     }
 
     /**
@@ -324,14 +337,29 @@ final class Client
         foreach ($params as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $item) {
-                    $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode((string) $item);
+                    $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode($this->stringifyValue($item));
                 }
             } else {
-                $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode((string) $value);
+                $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode($this->stringifyValue($value));
             }
         }
 
         return implode('&', $pairs);
+    }
+
+    /**
+     * Convert a scalar parameter value to its string representation.
+     *
+     * Booleans are serialized as `true`/`false` rather than PHP's default
+     * `1`/empty string, which the Phemex API expects for boolean flags.
+     */
+    private function stringifyValue(mixed $value): string
+    {
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        return (string) $value;
     }
 
     /**
@@ -354,7 +382,7 @@ final class Client
 
         $delay = $retryAfter > 0 ? $retryAfter : $exponential;
 
-        usleep($delay * 1_000_000);
+        ($this->sleeper)($delay);
     }
 
     private function sleepForBackoff(int $attempt): void
@@ -362,7 +390,7 @@ final class Client
         $baseDelay = max(1, $this->config->retryDelay);
         $delay = $baseDelay * (2 ** $attempt);
 
-        usleep($delay * 1_000_000);
+        ($this->sleeper)($delay);
     }
 
     private function defaultClient(): Psr18Client
