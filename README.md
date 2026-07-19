@@ -1,12 +1,16 @@
 # Phemex PHP
 
+![Phemex PHP SDK](https://i.postimg.cc/2SVT6yDg/phemex-api-php.jpg)
+
 [![PHP Version](https://img.shields.io/badge/php-%5E8.1-8892BF.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Latest Stable Version](https://img.shields.io/packagist/v/tigusigalpa/phemex-php.svg)](https://packagist.org/packages/tigusigalpa/phemex-php)
 
-> A modern, strictly typed PHP client for the [Phemex](https://phemex.com/) cryptocurrency exchange API. Works in any PHP 8.1+ project and ships with Laravel 10–13 integration out of the box.
+> A modern, strictly typed PHP client for the [Phemex](https://phemex.com/) cryptocurrency exchange API. Works in any
+> PHP 8.1+ project and ships with Laravel 10–13 integration out of the box.
 
-Trading crypto should not mean wrestling with raw cURL, HMAC signatures, and retry logic. This library wraps the Phemex REST API behind a clean, object-oriented interface so you can focus on strategy instead of plumbing.
+Trading crypto should not mean wrestling with raw cURL, HMAC signatures, and retry logic. This library wraps the Phemex
+REST API behind a clean, object-oriented interface so you can focus on strategy instead of plumbing.
 
 ```php
 use Tigusigalpa\Phemex\PhemexClient;
@@ -28,9 +32,11 @@ print_r($ticker->result());
 - **First-class Laravel support.** Auto-discovered service provider, publishable config, and a `Phemex` facade.
 - **Proper HMAC SHA256 signing.** Private endpoints are signed automatically using the official Phemex algorithm.
 - **Bring your own HTTP client.** Guzzle is used by default, but any PSR-18 implementation can be injected.
-- **Typed, future-proof responses.** Return values are DTOs that preserve the raw payload, so newly added API fields are always accessible.
+- **Typed, future-proof responses.** Return values are DTOs that preserve the raw payload, so newly added API fields are
+  always accessible.
 - **Automatic retries.** Rate limits (HTTP 429) and transient server errors are retried with exponential backoff.
-- **Clear exception hierarchy.** `AuthenticationException`, `RateLimitException`, `NotFoundException`, `ValidationException`, and `ApiException`.
+- **Clear exception hierarchy.** `AuthenticationException`, `RateLimitException`, `NotFoundException`,
+  `ValidationException`, and `ApiException`.
 - **WebSocket ready.** Optional real-time stream support via `ratchet/pawl`.
 
 ---
@@ -143,14 +149,14 @@ try {
 
 Every endpoint group is available through a dedicated method on the client.
 
-| Group | Client method | Covered endpoints |
-|-------|---------------|-------------------|
-| **Market Data** | `$client->market()` | products, time, orderBook, fullBook, kline, trades, 24h ticker, 24h all tickers, funding-rate-history |
-| **Spot Trading** | `$client->spot()` | create, amend, cancel, cancel-all, open order, open orders, wallets, order history, trade history |
-| **USDⓈ-M Contracts** | `$client->usdm()` | create, amend, cancel, bulk cancel, cancel all, open orders, positions, switch pos mode, leverage, assign balance, closed orders, trade history |
-| **Coin-M Contracts** | `$client->coinM()` | create, amend, cancel, bulk cancel, cancel all, open orders, account/positions, leverage, risk limit, assign balance |
-| **Margin Trading** | `$client->margin()` | create, cancel, cancel all, open order, borrow history, borrow, payback |
-| **Assets & Transfers** | `$client->assets()` | transfer, transfer history, universal transfer, deposit address, deposit/withdraw history |
+| Group                  | Client method       | Covered endpoints                                                                                                                               |
+|------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Market Data**        | `$client->market()` | products, time, orderBook, fullBook, kline, trades, 24h ticker, 24h all tickers, funding-rate-history                                           |
+| **Spot Trading**       | `$client->spot()`   | create, amend, cancel, cancel-all, open order, open orders, wallets, order history, trade history                                               |
+| **USDⓈ-M Contracts**   | `$client->usdm()`   | create, amend, cancel, bulk cancel, cancel all, open orders, positions, switch pos mode, leverage, assign balance, closed orders, trade history |
+| **Coin-M Contracts**   | `$client->coinM()`  | create, amend, cancel, bulk cancel, cancel all, open orders, account/positions, leverage, risk limit, assign balance                            |
+| **Margin Trading**     | `$client->margin()` | create, cancel, cancel all, open order, borrow history, borrow, payback                                                                         |
+| **Assets & Transfers** | `$client->assets()` | transfer, transfer history, universal transfer, deposit address, deposit/withdraw history                                                       |
 
 For concrete usage, see the `examples/` directory.
 
@@ -198,4 +204,5 @@ The suite uses a mocked HTTP client, so no API key or network access is required
 
 MIT. See [LICENSE](LICENSE) for details.
 
-Built by [Igor Sazonov](mailto:sovletig@gmail.com). Found a bug or missing an endpoint? Open an issue or a PR — contributions are welcome.
+Built by [Igor Sazonov](mailto:sovletig@gmail.com). Found a bug or missing an endpoint? Open an issue or a PR —
+contributions are welcome.
