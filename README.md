@@ -6,11 +6,12 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Latest Stable Version](https://img.shields.io/packagist/v/tigusigalpa/phemex-php.svg)](https://packagist.org/packages/tigusigalpa/phemex-php)
 
-> A modern, strictly typed PHP client for the [Phemex](https://phemex.com/) cryptocurrency exchange API. Works in any
-> PHP 8.1+ project and ships with Laravel 10–13 integration out of the box.
+> A typed PHP client for the [Phemex](https://phemex.com/) exchange API. Drop it into any PHP 8.1+ project, and if
+> you're on Laravel 10–13 it just works — no extra setup.
 
-Trading crypto should not mean wrestling with raw cURL, HMAC signatures, and retry logic. This library wraps the Phemex
-REST API behind a clean, object-oriented interface so you can focus on strategy instead of plumbing.
+I got tired of hand-rolling cURL calls, computing HMAC signatures, and bolting on retry logic every time I touched the
+Phemex API. So this library does all of that for you and hands back a clean, object-oriented interface. You write
+strategy; it handles the plumbing.
 
 ```php
 use Tigusigalpa\Phemex\PhemexClient;
@@ -26,18 +27,16 @@ print_r($ticker->result());
 
 ---
 
-## What you get
+## What's in the box
 
-- **Framework-agnostic core.** The client is plain PHP 8.1+ and uses PSR-18 for HTTP, so it runs anywhere.
-- **First-class Laravel support.** Auto-discovered service provider, publishable config, and a `Phemex` facade.
-- **Proper HMAC SHA256 signing.** Private endpoints are signed automatically using the official Phemex algorithm.
-- **Bring your own HTTP client.** Guzzle is used by default, but any PSR-18 implementation can be injected.
-- **Typed, future-proof responses.** Return values are DTOs that preserve the raw payload, so newly added API fields are
-  always accessible.
-- **Automatic retries.** Rate limits (HTTP 429) and transient server errors are retried with exponential backoff.
-- **Clear exception hierarchy.** `AuthenticationException`, `RateLimitException`, `NotFoundException`,
-  `ValidationException`, and `ApiException`.
-- **WebSocket ready.** Optional real-time stream support via `ratchet/pawl`.
+- **Runs anywhere.** The core is plain PHP 8.1+ built on PSR-18 — no framework required.
+- **Laravel, out of the box.** Auto-discovered service provider, publishable config, and a `Phemex` facade.
+- **Signing you don't think about.** Private endpoints get HMAC SHA256 signatures automatically, straight from Phemex's own algorithm.
+- **Your HTTP client, your rules.** Guzzle ships by default, but swap in any PSR-18 implementation you like.
+- **Responses that won't break.** Return values are DTOs that keep the raw payload around, so when Phemex adds a field, you can still reach it.
+- **Retries handled for you.** Rate limits (HTTP 429) and flaky server errors are retried with exponential backoff.
+- **Exceptions that make sense.** `AuthenticationException`, `RateLimitException`, `NotFoundException`, `ValidationException`, and `ApiException`.
+- **Real-time when you need it.** Optional WebSocket streams via `ratchet/pawl`.
 
 ---
 
@@ -49,7 +48,7 @@ composer require tigusigalpa/phemex-php
 
 ### Laravel
 
-The service provider is auto-discovered. Publish the config file when you want to customize defaults:
+The service provider is auto-discovered, so there's nothing to register. Publish the config file whenever you want to tweak the defaults:
 
 ```bash
 php artisan vendor:publish --provider="Tigusigalpa\Phemex\Laravel\PhemexServiceProvider"
@@ -79,7 +78,7 @@ return [
 ];
 ```
 
-Want to use your own PSR-18 client (with custom middleware, logging, or metrics)? Bind it in a service provider:
+Prefer your own PSR-18 client — maybe with custom middleware, logging, or metrics? Just bind it in a service provider:
 
 ```php
 $this->app->bind(\Psr\Http\Client\ClientInterface::class, MyPsr18Client::class);
@@ -147,7 +146,7 @@ try {
 
 ## Endpoints
 
-Every endpoint group is available through a dedicated method on the client.
+Each endpoint group lives behind its own method on the client:
 
 | Group                  | Client method       | Covered endpoints                                                                                                                               |
 |------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -158,13 +157,13 @@ Every endpoint group is available through a dedicated method on the client.
 | **Margin Trading**     | `$client->margin()` | create, cancel, cancel all, open order, borrow history, borrow, payback                                                                         |
 | **Assets & Transfers** | `$client->assets()` | transfer, transfer history, universal transfer, deposit address, deposit/withdraw history                                                       |
 
-For concrete usage, see the `examples/` directory.
+Want to see these in action? Check out the `examples/` directory.
 
 ---
 
 ## WebSocket streams
 
-Optional WebSocket support is available when you install `ratchet/pawl`:
+Need real-time data? Install `ratchet/pawl` and you're set:
 
 ```bash
 composer require ratchet/pawl
@@ -196,7 +195,7 @@ composer install
 vendor/bin/phpunit
 ```
 
-The suite uses a mocked HTTP client, so no API key or network access is required.
+Everything runs against a mocked HTTP client, so you don't need an API key or a network connection to run the suite.
 
 ---
 
@@ -204,5 +203,5 @@ The suite uses a mocked HTTP client, so no API key or network access is required
 
 MIT. See [LICENSE](LICENSE) for details.
 
-Built by [Igor Sazonov](mailto:sovletig@gmail.com). Found a bug or missing an endpoint? Open an issue or a PR —
-contributions are welcome.
+Built by [Igor Sazonov](mailto:sovletig@gmail.com). Spotted a bug or missing an endpoint? Open an issue or send a PR —
+I'd love the help.
