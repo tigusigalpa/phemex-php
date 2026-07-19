@@ -1,0 +1,63 @@
+{
+    "name": "tigusigalpa/phemex-php",
+    "description": "A framework-agnostic PHP client for the Phemex cryptocurrency exchange API with first-class Laravel support.",
+    "type": "library",
+    "keywords": [
+        "phemex",
+        "cryptocurrency",
+        "exchange",
+        "api",
+        "client",
+        "php",
+        "laravel",
+        "trading",
+        "bitcoin",
+        "crypto"
+    ],
+    "homepage": "https://github.com/tigusigalpa/phemex-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Sazonov",
+            "email": "sovletig@gmail.com",
+            "homepage": "https://github.com/tigusigalpa"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "guzzlehttp/guzzle": "^7.4",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.0 || ^2.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "suggest": {
+        "ratchet/pawl": "Enable real-time WebSocket streams (^0.4)",
+        "illuminate/support": "Use the Laravel facade and service provider (^10.0 || ^11.0 || ^12.0 || ^13.0)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tigusigalpa\\Phemex\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tigusigalpa\\Phemex\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tigusigalpa\\Phemex\\Laravel\\PhemexServiceProvider"
+            ],
+            "aliases": {
+                "Phemex": "Tigusigalpa\\Phemex\\Laravel\\Facades\\Phemex"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
